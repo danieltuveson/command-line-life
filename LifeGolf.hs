@@ -15,24 +15,14 @@ data CellState
 
 main :: IO ()
 main = do
-    -- Pass width, height, and framerate into the program as command line arguments
-    args <- getArgs
-    let width = readArg 0 args
-    let height = readArg 1 args
-    let fps = readArg 2 args
-
-    -- Initialize and run the game
-    game <- initGame height width
-    runGame fps game
-  where readArg i ls = (read (ls !! i))
-
+    a <- getArgs
+    let [w, h, f] = a
+    g <- initGame h w
+    runGame f g
 
 -- Game loop
 runGame :: Int -> Game -> IO ()
-runGame fps game = do
-    printGame game
-    threadDelay (1000000 `div` fps)
-    runGame fps (updateGame game)
+runGame f g = do {printGame g; threadDelay (1000000 `div` f); runGame f (updateGame g)}
 
 
 
@@ -42,8 +32,8 @@ runGame fps game = do
 
 -- Initialize game with certain width and height
 initGame :: Int -> Int -> IO Game
-initGame height width = do
-    r <- randomCells height width []
+initGame width height = do
+    r <- randomCells width height []
     return $ Game $ indexList $ map indexList r
 
 -- return a list with indices 0-n, e.g. ['a', 'b', 'c'] -> [(0, 'a'), (1, 'b'), (2, 'c')]
